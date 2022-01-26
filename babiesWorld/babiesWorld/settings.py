@@ -2,6 +2,7 @@ from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+MEDIA_DIR = Path(BASE_DIR, 'media')
 
 
 # Quick-start development settings - unsuitable for production
@@ -24,25 +25,141 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'django.contrib.sites',      # included
     'django.contrib.staticfiles',
 
     # local apps
     'users.apps.UsersConfig',
     'products.apps.ProductsConfig',
+    'care.apps.CareConfig',
+    'tips.apps.TipsConfig',
 
     # third party apps
-    'rest_framework'
+    'django_filters',
+    'corsheaders',
+    'djmoney',
+    
+    'rest_framework',
+    'rest_framework.authtoken',
+    'rest_auth',
+    'rest_auth.registration',
+
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount'
 ]
+
+SITE_ID = 1
+
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS':
+    'products.pagination.LimitOffsetPaginationWithUpperBound',
+    'PAGE_SIZE': 3,
+
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend',
+        'rest_framework.filters.OrderingFilter',
+        'rest_framework.filters.SearchFilter',
+        ],
+
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication'
+    ],
+
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle'
+    ],
+
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '5/hour',
+        'user': '10/hour',
+        'products': '10/hour',
+        'care': '10/hour',
+        'tips': '15/hour'
+    }
+}
+
+"""
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS':
+    'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 3
+}
+"""
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',                # Cors Headers
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware'    
 ]
+
+"""
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8080"
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    
+]
+
+CORS_ORIGIN_WHITELIST = (
+    
+    # React
+    'http://localhost:8000',
+    'http://localhost:4200',
+    'http://localhost:3000',
+    
+        # React Native
+    'http://localhost:8081'
+    # '*'
+)
+
+CORS_ORIGIN_ALLOW_ALL = True or False
+
+CORS_ORIGIN_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT'
+]
+
+from corsheaders.defaults import default_methods
+
+CORS_ALLOW_METHODS = list(default_methods) + [
+    'POKE',
+]
+
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
+
+from corsheaders.defaults import default_headers
+
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    'my-custom-header'
+]
+
+CORS_PREFLIGHT_MAX_AGE: int
+
+CORS_ALLOW_CREDENTIALS: bool
+"""
 
 ROOT_URLCONF = 'babiesWorld.urls'
 
@@ -112,6 +229,9 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+MEDIA_ROOT = MEDIA_DIR
+MEDIA_URL = '/media/'
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
@@ -121,3 +241,9 @@ AUTH_USER_MODEL = 'users.User'
 
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
+
+"""
+    ACCOUNT_EMAIL_VERIFICATION = 'none'
+    ACCOUNT_AUTHENTICATION_METHOD = 'username'
+    ACCOUNT_EMAIL_REQUIRED = False
+"""

@@ -1,2 +1,3 @@
 # babies-world
-A Web app for Babies made with Django Rest Framework
+A Web app for Babies.
+API written in Django Rest Framework
